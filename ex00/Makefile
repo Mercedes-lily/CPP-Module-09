@@ -6,7 +6,6 @@ CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address
 OBJ_DIR = obj/
 
 SRCS =	btc.cpp \
-		Bitcoin.cpp \
 
 VPATH = $(OBJ_DIR)
 
