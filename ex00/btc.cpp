@@ -1,10 +1,39 @@
-#include <string>
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <map>
 #include <cstdlib>
+#include <cstring>
 
-void mapformonth(std::map<int, int> month)
+//TODO le programme n<exite pas s<il y a une ligne invalid in marque seulement le code d'erreur
+
+float find_exchange_rate(std::map<int, float> &csvData, int total)
+{
+	if(csvData.find(total) != csvData.end())
+	{
+		std::cout << "1-" << std::endl;
+		return(csvData.find(total)->second);
+	}
+	else
+	{
+		std::cout << "2-" << std::endl;
+
+		for(int i = 1; i <= 10; i++)
+		{
+			if(csvData.find(total - i) != csvData.end())
+			{
+				std::cout << csvData.find(8)->second << std::endl;
+				std::cout << total - i << std::endl;
+				std::cout << csvData.find(total - i)->second << std::endl;
+				return(csvData.find(total - i)->second);
+			}
+		}
+		return(47115.93);
+	}
+	return(0);
+}
+
+void mapformonth(std::map<int, int> &month)
 {
 	//non-bissextile
 	month[1] = 0;
@@ -34,69 +63,22 @@ void mapformonth(std::map<int, int> month)
 	month[32] = 335;
 }
 
-int fillmapinput(char *line, std::map<int, float> &inputData, std::map<int, int> month)
+void fillmapcsv(char *line, std::map<int, float> &csvData, std::map<int, int> month)
 {
 	std::string strline(line);
-	std::string YearStr = strline.substr(0,3);
-	std::string MonthStr = strline.substr(5,6);
-	std::string DateStr = strline.substr(8,9);
-	std::string BitcoinStr = strline.substr(13);
+	std::string YearStr = strline.substr(0,4);
+	std::string MonthStr = strline.substr(5,2);
+	std::string DateStr = strline.substr(8,2);
+	std::string BitcoinStr = strline.substr(11);
 	int YearInt = atoi(YearStr.c_str());
 	int MonthInt = atoi(MonthStr.c_str());
 	int DateInt = atoi(DateStr.c_str());
-	double BitcoinInt = atof(BitcoinStr.c_str());
-	if (YearInt < 2009)
-	{
-		std::cout << "No value before 2009" << std::endl;
-		return(1);
-	}
-	if (MonthInt < 1 || MonthInt > 12)
-	{
-		std::cout << "Month must be between 0 and 12" << std::endl;
-		return(1);
-	}
-	if (MonthInt == 2)
-	{
-		if (YearInt % 4 == 0)
-		{
-			if (MonthInt < 1 || MonthInt > 29)
-			{
-				std::cout << "February must be between 0 and 29 for " << YearInt << std::endl;
-				return(1);
-			}
-		}
-		else
-		{
-			if (MonthInt < 1 || MonthInt > 28)
-			{
-				std::cout << "February must be between 0 and 28 for " << YearInt << std::endl;
-				return(1);
-			}
-		}
-	}
-	else if(MonthInt == 4 || MonthInt == 6 || MonthInt == 9 || MonthInt == 11)
-	{
-		if (MonthInt < 1 || MonthInt > 30)
-		{
-			std::cout << "Wrong date" << std::endl;
-			return(1);
-		}
-	}
-	else
-	{
-		if (MonthInt < 1 || MonthInt > 31)
-		{
-			std::cout << "Wrong date" << std::endl;
-			return(1);
-		}
-	}
-	//change for the number
-	int tmp;
-	int bissextile;
-	int nonbissextile;
-	int total;
-	nonbissextile = YearInt - 2009;
-	while(nonbissextile - 4 >= 0)
+	float BitcoinInt = atof(BitcoinStr.c_str());
+	int bissextile = 0;
+	int nonbissextile = YearInt - 2009;
+	int tmp = nonbissextile;
+	int total = 0;
+	while(tmp - 4 >= 0)
 	{
 		tmp -= 4;
 		bissextile++;
@@ -108,11 +90,93 @@ int fillmapinput(char *line, std::map<int, float> &inputData, std::map<int, int>
 	else
 		total += month[MonthInt];
 	total += DateInt;
-	inputData[total] = BitcoinInt;
+	csvData[total] = BitcoinInt;
 }
 
 
-int createInputMap(std::fstream &input, std::map<int, float> &inputData, std::map<int, int> month)
+void fillmapinput(char *line , std::map<int, float> csvData, std::map<int, int> month)
+{
+	std::string strline(line);
+	std::string YearStr = strline.substr(0,4);
+	std::string MonthStr = strline.substr(5,2);
+	std::string DateStr = strline.substr(8,2);
+	std::string BitcoinStr = strline.substr(13);
+	int YearInt = atoi(YearStr.c_str());
+	int MonthInt = atoi(MonthStr.c_str());
+	int DateInt = atoi(DateStr.c_str());
+	float BitcoinInt = atof(BitcoinStr.c_str());
+	if (YearInt < 2009)
+	{
+		std::cout << "No value before 2009" << std::endl;
+		return;
+	}
+	if (MonthInt < 1 || MonthInt > 12)
+	{
+		std::cout << "Month must be between 0 and 12" << std::endl;
+		return;
+	}
+	if (MonthInt == 2)
+	{
+		if (YearInt % 4 == 0)
+		{
+			if (MonthInt < 1 || MonthInt > 29)
+			{
+				std::cout << "February must be between 0 and 29 for " << YearInt << std::endl;
+				return;
+			}
+		}
+		else
+		{
+			if (MonthInt < 1 || MonthInt > 28)
+			{
+				std::cout << "February must be between 0 and 28 for " << YearInt << std::endl;
+				return;
+			}
+		}
+	}
+	else if(MonthInt == 4 || MonthInt == 6 || MonthInt == 9 || MonthInt == 11)
+	{
+		if (MonthInt < 1 || MonthInt > 30)
+		{
+			std::cout << "Wrong date" << std::endl;
+			return;
+		}
+	}
+	else
+	{
+		if (MonthInt < 1 || MonthInt > 31)
+		{
+			std::cout << "Wrong date" << std::endl;
+			return;
+		}
+	}
+	int bissextile = 0;
+	int nonbissextile = YearInt - 2009;
+	int tmp = nonbissextile;
+	int total = 0;
+	//change for the number
+	float exchange_rate = 0;
+	nonbissextile = YearInt - 2009;
+	while(tmp - 4 >= 0)
+	{
+		tmp -= 4;
+		bissextile++;
+		nonbissextile--;
+	}
+	total = (365 * nonbissextile) + (366 * bissextile);
+	if (YearInt % 4 == 0)
+		total += month[MonthInt + 20];
+	else
+		total += month[MonthInt];
+	total += DateInt;
+	exchange_rate = find_exchange_rate(csvData, total);
+	std::cout << "exchange_rate " << exchange_rate << std::endl;
+	std::cout << "BitcoinInt " << BitcoinInt << std::endl;
+	std::cout << YearInt << "-" << MonthStr << "-" << DateStr << "=>" << BitcoinInt << "=" << (exchange_rate * BitcoinInt) << std::endl;
+}
+
+
+int createInputMap(std::fstream &input, std::map<int, float> csvData, std::map<int, int> month)
 {
 	char line[40];
 	input.getline(line, 40);
@@ -127,11 +191,17 @@ int createInputMap(std::fstream &input, std::map<int, float> &inputData, std::ma
 		input.getline(line, 40);
 		if(input.eof() == 1)
 			continue;
+		if(line[0] == 0)
+			continue;
+		if(strlen(line) < 14)
+		{
+			std::cout << "Your entry id invalid: " << line << std::endl;
+			continue;
+		}
 		if(line[4] != '-' || line[7] != '-' ||line[11] != '|' || line[10] != ' ' || line[12] != ' ')
 		{
-			std::cout << "Your entry : " << line << std::endl;
-			std::cout << "Wrong format : YYYY-MM-DD | value between 0 and 1000" << std::endl;
-			return(1);
+			std::cout << "Your entry is invalid : " << line << std::endl;
+			continue;
 		}
 		std::cout << line << std::endl;
 		for(int i = 0; i < 4; i++)
@@ -140,14 +210,15 @@ int createInputMap(std::fstream &input, std::map<int, float> &inputData, std::ma
 			{
 				std::cout << "Invalid entry for the year : " << line[0] << line[1] << line[2] << line[3];
 				std::cout << " in " << line  << std::endl;
-				return(1);
+				continue;
 			}
 		}
 		for(int i = 5; i < 7; i++)
 		{
 			if (line[i] < '0' || line[i] > '9')
 			{
-								std::cout << "Inavalid entry for the month : " << line[5] << line[6] << std::endl;return(1);
+				std::cout << "Inavalid entry for the month : " << line[5] << line[6] << std::endl;
+				continue;
 			}
 		}
 		for(int i = 8; i < 10; i++)
@@ -155,7 +226,7 @@ int createInputMap(std::fstream &input, std::map<int, float> &inputData, std::ma
 			if (line[i] < '0' || line[i] > '9')
 			{
 				std::cout << "Inavalid entry for the day : " << line[8] << line[9] << std::endl;
-				return(1);
+				continue;
 			}
 		}
 		int dot = 0;
@@ -167,16 +238,16 @@ int createInputMap(std::fstream &input, std::map<int, float> &inputData, std::ma
 				if(dot >= 2)
 				{
 					std::cout << "More than one dot in: " << line << std::endl;
-					return(1);
+					continue;
 				}
 			}
 			else if (line[i] < '0' || line[i] > '9')
 			{
 				std::cout << "Invalid entry for the number of bit coin : " << line << std::endl;
-				return(1);
+				continue;
 			}
 		}
-		fillmapinput(line, inputData, month); //TODO changer le nom
+		fillmapinput(line, csvData, month);
 	}
 	return(0);
 }
@@ -194,7 +265,9 @@ int createCSVMap(std::fstream &csv, std::map<int, float> &csvData, std::map<int,
 	while(!csv.eof())
 	{
 		csv.getline(line, 40);
-		if(line[4] != '-' || line[7] != '-' ||line[11] != ',')
+		if(csv.eof() == 1)
+			continue;
+		if(line[4] != '-' || line[7] != '-' ||line[10] != ',')
 		{
 			std::cout << "Wrong format : YYYY-MM-DD,value" << std::endl;
 			return(1);
@@ -203,24 +276,24 @@ int createCSVMap(std::fstream &csv, std::map<int, float> &csvData, std::map<int,
 		{
 			if (line[i] < '0' || line[i] > '9')
 			{
-			std::cout << "Wrong format : YYYY-MM-DD,value" << std::endl;
-			return(1);
+				std::cout << "Wrong format : YYYY-MM-DD,value" << std::endl;
+				return(1);
 			}
 		}
 		for(int i = 5; i < 7; i++)
 		{
 			if (line[i] < '0' || line[i] > '9')
 			{
-			std::cout << "Wrong format : YYYY-MM-DD,value" << std::endl;
-			return(1);
+				std::cout << "Wrong format : YYYY-MM-DD,value" << std::endl;
+				return(1);
 			}
 		}
 		for(int i = 8; i < 10; i++)
 		{
 			if (line[i] < '0' || line[i] > '9')
 			{
-			std::cout << "Wrong format : YYYY-MM-DD,value" << std::endl;
-			return(1);
+				std::cout << "Wrong format : YYYY-MM-DD,value" << std::endl;
+				return(1);
 			}
 		}
 		int dot = 0;
@@ -241,12 +314,7 @@ int createCSVMap(std::fstream &csv, std::map<int, float> &csvData, std::map<int,
 				return(1);
 			}
 		}
-		// verifier chiffre ou . bitcoin.
-		std::string strline(line);
-		std::string date = strline.substr(0, 9);
-		std::string exchange_rate = strline.substr(11);
-		double iexchange_rate = atof(exchange_rate.c_str());
-		csvData[date] = iexchange_rate;
+		fillmapcsv(line, csvData, month);
 	}
 	return(0);
 }
@@ -283,13 +351,12 @@ int main(int argc, char **argv)
 	std::fstream csv("data.csv", std::fstream::in);
 	std::map<int, int> month;
 	std::map<int, float> csvData;
-	std::map<int, float> inputData;
 	if(check(argc, argv[1], input, csv) == 1)
 		return(1);
 	mapformonth(month);
-	createInputMap(input, inputData, month);
-	createCSVMap(input, csvData, month);
-	//function qui fait la conversion
+	if(createCSVMap(csv, csvData, month) == 1)
+		return(1);
+	createInputMap(input, csvData, month);
 	csv.close();
 	input.close();
 }
