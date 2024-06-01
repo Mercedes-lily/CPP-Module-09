@@ -1,11 +1,11 @@
 NAME = RPN
 
 CC = c++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address
+CFLAGS = -Wall -Werror -Wextra -std=c++98 -g -fsanitize=address
 
 OBJ_DIR = obj/
 
-SRCS =	btc.cpp \
+SRCS =	RPN.cpp \
 
 VPATH = $(OBJ_DIR)
 
