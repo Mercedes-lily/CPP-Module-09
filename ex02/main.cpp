@@ -11,6 +11,7 @@ int main(int argc, char **argv)
 	}
 	if (merge.initialisation(argv +1) == 1)
 		return(1);
-	merge.dequeMerge(0);
-	merge.listMerge();
+	merge.dequeMerge();
+	merge.vectorMerge();
+	merge.printtime();
 }
