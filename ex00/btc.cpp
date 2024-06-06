@@ -10,23 +10,13 @@
 float find_exchange_rate(std::map<int, float> &csvData, int total)
 {
 	if(csvData.find(total) != csvData.end())
-	{
-		std::cout << "1-" << std::endl;
 		return(csvData.find(total)->second);
-	}
 	else
 	{
-		std::cout << "2-" << std::endl;
-
 		for(int i = 1; i <= 10; i++)
 		{
 			if(csvData.find(total - i) != csvData.end())
-			{
-				std::cout << csvData.find(8)->second << std::endl;
-				std::cout << total - i << std::endl;
-				std::cout << csvData.find(total - i)->second << std::endl;
 				return(csvData.find(total - i)->second);
-			}
 		}
 		return(47115.93);
 	}
@@ -112,31 +102,31 @@ void fillmapinput(char *line , std::map<int, float> csvData, std::map<int, int> 
 	}
 	if (MonthInt < 1 || MonthInt > 12)
 	{
-		std::cout << "Month must be between 0 and 12" << std::endl;
+		std::cout << "Month must be between 1 and 12" << std::endl;
 		return;
 	}
 	if (MonthInt == 2)
 	{
 		if (YearInt % 4 == 0)
 		{
-			if (MonthInt < 1 || MonthInt > 29)
+			if (DateInt < 1 || DateInt > 29)
 			{
-				std::cout << "February must be between 0 and 29 for " << YearInt << std::endl;
+				std::cout << "February must be between 1 and 29 for " << YearInt << std::endl;
 				return;
 			}
 		}
 		else
 		{
-			if (MonthInt < 1 || MonthInt > 28)
+			if (DateInt < 1 || DateInt > 28)
 			{
-				std::cout << "February must be between 0 and 28 for " << YearInt << std::endl;
+				std::cout << "February must be between 1 and 28 for " << YearInt << std::endl;
 				return;
 			}
 		}
 	}
 	else if(MonthInt == 4 || MonthInt == 6 || MonthInt == 9 || MonthInt == 11)
 	{
-		if (MonthInt < 1 || MonthInt > 30)
+		if (DateInt < 1 || DateInt > 30)
 		{
 			std::cout << "Wrong date" << std::endl;
 			return;
@@ -144,7 +134,7 @@ void fillmapinput(char *line , std::map<int, float> csvData, std::map<int, int> 
 	}
 	else
 	{
-		if (MonthInt < 1 || MonthInt > 31)
+		if (DateInt < 1 || DateInt > 31)
 		{
 			std::cout << "Wrong date" << std::endl;
 			return;
@@ -170,8 +160,6 @@ void fillmapinput(char *line , std::map<int, float> csvData, std::map<int, int> 
 		total += month[MonthInt];
 	total += DateInt;
 	exchange_rate = find_exchange_rate(csvData, total);
-	std::cout << "exchange_rate " << exchange_rate << std::endl;
-	std::cout << "BitcoinInt " << BitcoinInt << std::endl;
 	std::cout << YearInt << "-" << MonthStr << "-" << DateStr << "=>" << BitcoinInt << "=" << (exchange_rate * BitcoinInt) << std::endl;
 }
 
@@ -203,7 +191,6 @@ int createInputMap(std::fstream &input, std::map<int, float> csvData, std::map<i
 			std::cout << "Your entry is invalid : " << line << std::endl;
 			continue;
 		}
-		std::cout << line << std::endl;
 		for(int i = 0; i < 4; i++)
 		{
 			if (line[i] < '0' || line[i] > '9')
