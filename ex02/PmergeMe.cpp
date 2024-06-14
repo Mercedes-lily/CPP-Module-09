@@ -208,10 +208,6 @@ void PmergeMe::vectorMerge()
 				this->_vmerge.erase (this->_vmerge.begin() + j);
 			}
 		}
-		std::cout << "Vector big number :   " << std::endl;
-		for(it = result.begin(); it != result.end(); it++)
-			std::cout << *it << " ";
-		std::cout << std::endl;
 		it = this->_vmerge.begin();
 
 		while(it != this->_vmerge.end())

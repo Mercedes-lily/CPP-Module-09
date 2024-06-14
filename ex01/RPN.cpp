@@ -3,40 +3,40 @@
 #include <string>
 #include <cstring>
 
-int createstack(std::stack<int> &stck, char**rpneq)
+int createstack(std::stack<int> &stck, char* equation)
 {
 	int numbers = 0;
 	int len = 0;
-	while(rpneq[len])
+	while(equation[len])
 		len++;
 	for(int i = len -1; i>= 0; i--)
 	{
-		if(rpneq[i][0] >= '0' && rpneq[i][0] <= '9')
+		if(equation[i] >= '0' && equation[i] <= '9')
 		{
-			stck.push(rpneq[i][0] - 48);
+			stck.push(equation[i] - 48);
 			numbers++;
 		}
-		else if(rpneq[i][0] == '+' || rpneq[i][0] == '-' || rpneq[i][0] == '*' || rpneq[i][0] == '/')
-			stck.push(rpneq[i][0]);
-		else if(rpneq[i][0] == ' ')
+		else if(equation[i] == '+' || equation[i] == '-' || equation[i] == '*' || equation[i] == '/')
+			stck.push(equation[i]);
+		else if(equation[i] == ' ')
 			continue;
 		else
 		{
-			std::cout << rpneq[i][0] << " is an invalid value" << std::endl;
+			std::cout << equation[i] << " is an invalid value" << std::endl;
 			return(1);
 		}
 	}
-	if(rpneq[0][0] <= '0' || rpneq[0][0] >= '9')
+	if(equation[0] < '0' || equation[0] > '9')
 	{
 		std::cout << "Must begin with a number" << std::endl;
 		return(1);
 	}
-	else if(rpneq[len -1][0] >= '0' && rpneq[len - 1][0] <= '9')
+	else if(equation[len -1] >= '0' && equation[len - 1] <= '9')
 	{
 		std::cout << "Must finish with an operator" << std::endl;
 		return(1);
 	}
-	else if(numbers != (len / 2) + 1)
+	else if(numbers != (stck.size() / 2) + 1)
 	{
 		std::cout << "Invalid equation" << std::endl;
 		return(1);
@@ -71,8 +71,13 @@ int executernp(std::stack<int> &stck)
 		result = first - second;
 	else if(op == '*')
 		result = first * second;
-	else if(op == '/')
+	else if(op == '/' && second != 0)
 		result = first / second;
+	else if(op == '/' && second == 0)
+	{
+		std::cout << "Impossible to divide by 0" << std::endl;
+		return(1);
+	}
 	else 
 	{
 		std::cout << "Invalid equation" << std::endl;
@@ -109,10 +114,11 @@ int executernp(std::stack<int> &stck)
 	return(0);
 }
 
-int RPN(char **argv)
+int RPN(char *equation)
 {
 	std::stack<int> stck;
-	if(createstack(stck, argv + 1) == 1)
+
+	if(createstack(stck, equation) == 1)
 		return(1);
 	if(executernp(stck) == 1)
 		return(1);
@@ -126,7 +132,12 @@ int main (int argc, char ** argv)
 		std::cout << "Enter an equation in reverse polish notation" << std::endl;
 		return(1);
 	}
-	if(RPN(argv) == 1)
+	if(argc == 3)
+	{
+		std::cout << "Enter only 1 equation" << std::endl;
+		return(1);
+	}
+	if(RPN(argv[1]) == 1)
 		return(1);
 	return(0);
 }

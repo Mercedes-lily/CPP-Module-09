@@ -95,6 +95,16 @@ void fillmapinput(char *line , std::map<int, float> csvData, std::map<int, int> 
 	int MonthInt = atoi(MonthStr.c_str());
 	int DateInt = atoi(DateStr.c_str());
 	float BitcoinInt = atof(BitcoinStr.c_str());
+	if(BitcoinInt < 0)
+	{
+		std::cout << "Negative bitcoin" << std::endl;
+		return;
+	}
+	if(BitcoinInt > 1000)
+	{
+		std::cout << "Too many bitcoin" << std::endl;
+		return;
+	}
 	if (YearInt < 2009)
 	{
 		std::cout << "No value before 2009" << std::endl;
@@ -160,7 +170,7 @@ void fillmapinput(char *line , std::map<int, float> csvData, std::map<int, int> 
 		total += month[MonthInt];
 	total += DateInt;
 	exchange_rate = find_exchange_rate(csvData, total);
-	std::cout << YearInt << "-" << MonthStr << "-" << DateStr << "=>" << BitcoinInt << "=" << (exchange_rate * BitcoinInt) << std::endl;
+	std::cout << YearInt << "-" << MonthStr << "-" << DateStr << "=>" << BitcoinInt << "=" << std::fixed << (exchange_rate * BitcoinInt) << std::endl;
 }
 
 
@@ -230,7 +240,7 @@ int createInputMap(std::fstream &input, std::map<int, float> csvData, std::map<i
 			}
 			else if (line[i] < '0' || line[i] > '9')
 			{
-				std::cout << "Invalid entry for the number of bit coin : " << line << std::endl;
+				std::cout << "Invalid entry for the number of bitcoin : " << line << std::endl;
 				continue;
 			}
 		}
